@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
   <title>Trumperator - The Trump Generator</title>
   <!-- Fun retro font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -399,7 +398,7 @@
   <!-- Trump Showcase -->
   <div class="trump-showcase" id="trump-showcase" style="display: none;">
     <h2>Your Trump Companion</h2>
-    <!-- Generated Trump figure appears here -->
+    <!-- Generated ASCII Trump figures appear here -->
   </div>
 
   <!-- Log Area -->
@@ -414,7 +413,7 @@
       <li><strong>ID Input</strong>: Provide a unique ID or default to your address alone.</li>
       <li><strong>Hashing Protocol</strong>: Transforms your input into a 32-bit integer for the random Trump data.</li>
       <li><strong>Trump Attributes</strong>: We assign style, hair color, trait, accessory, and “ego level.”</li>
-      <li><strong>Deterministic Output</strong>: The same inputs yield the same ASCII Trump, exclusively yours!</li>
+      <li><strong>Deterministic Output</strong>: The same inputs yield the same ASCII Trump—exclusively yours!</li>
     </ol>
     <p>This solution merges cryptographic determinism with a comedic presidential flair.</p>
   </div>
@@ -441,9 +440,7 @@
         <h4>Media Mogul</h4>
         <p>Loves the spotlight and commands attention wherever it goes.</p>
       </div>
-      <!-- Add more as desired... -->
     </div>
-
     <h3>Rarity & Collectibility</h3>
     <p>Some Trump figures boast special accessories, rare hair patterns, or legendary ego levels. Keep experimenting with different IDs to collect them all!</p>
   </div>
@@ -453,7 +450,7 @@
     © 2025 TRUMPERATOR - THE TRUMP GENERATOR
   </footer>
 
-  <!-- Script: EXACT SAME LOGIC, TRUMP-THEMED DATA -->
+  <!-- JavaScript -->
   <script>
   (function() {
     // DOM Elements
@@ -466,125 +463,123 @@
     const loadingContainer = document.getElementById('loading-container');
     const logArea = document.getElementById('logArea');
 
-    // Phantom Wallet Integration
-    const getProvider = () => {
+    let userWalletAddress = null;
+
+    // Phantom wallet detection
+    function getProvider() {
       if ("solana" in window) {
         const provider = window.solana;
         if (provider.isPhantom) return provider;
       }
       return null;
-    };
-    let userWalletAddress = null;
+    }
 
-    // Connect Wallet
-    const connectWallet = async () => {
+    // Connect Phantom wallet
+    async function connectWallet() {
       const provider = getProvider();
       if (provider) {
         try {
-          const response = await provider.connect();
-          userWalletAddress = response.publicKey.toString();
+          const resp = await provider.connect();
+          userWalletAddress = resp.publicKey.toString();
           walletAddressDisplay.textContent = `Connected: ${userWalletAddress.substring(0, 6)}...${userWalletAddress.substring(userWalletAddress.length - 4)}`;
           connectWalletButton.style.display = 'none';
           generatorSection.style.display = 'block';
           logMessage("Wallet connected successfully.", "success");
 
+          // Check if user already has a Trump stored
           checkExistingTrump(userWalletAddress);
-        } catch (err) {
-          console.error(err);
+
+        } catch (e) {
+          console.error(e);
           logMessage("Failed to connect wallet.", "error");
         }
       } else {
-        alert("Phantom Wallet not found. Please install the Phantom extension.");
+        alert("Phantom Wallet not found. Please install it first.");
         window.open("https://phantom.app/", "_blank");
       }
-    };
+    }
     connectWalletButton.addEventListener('click', connectWallet);
 
-    // ASCII TRUMP Types
+    // ASCII TRUMP Data
     const TRUMP_TYPES = [
       {
         archetype: 'Golden Mane',
-        lines: [
-          String.raw`       __`,
-          String.raw` (___()'`;,
-          String.raw` /,    /`,
-          String.raw` \\"--\\`
-        ],
-        catchphrase: `"Make it YUGE!"`
+        asciiLines: [
+String.raw`   ____ `,
+String.raw`  /    \  `,
+String.raw` (  ^^^ ) ~ "Huge Impact"`,
+String.raw` (  -  - ) `,
+String.raw`  \ ---- /`
+        ]
       },
       {
         archetype: 'Executive',
-        lines: [
-          String.raw`   /\___/\`,
-          String.raw`  (  -.-  )`,
-          String.raw`   )   (  `,
-          String.raw`  / ____ \ `
-        ],
-        catchphrase: `"Leading the Deal!"`
+        asciiLines: [
+String.raw`   /  \  `,
+String.raw`  ( >< ) ~ "I'm in charge!"`,
+String.raw`  ( ___ ) `,
+String.raw`   \___/  `
+        ]
       },
       {
         archetype: 'Deal Maker',
-        lines: [
-          String.raw`  (\__/)`,
-          String.raw`  ( o.o )`,
-          String.raw`   > ^ <`
-        ],
-        catchphrase: `"Believe Me, It's Great!"`
+        asciiLines: [
+String.raw`   .--.  `,
+String.raw`  ( /\ ) ~ "Let's make a deal!"`,
+String.raw`  / \/ \ `,
+String.raw`   '--'  `
+        ]
       },
       {
         archetype: 'Media Mogul',
-        lines: [
-          String.raw`    /\     /\`,
-          String.raw`   {  '   '  }`,
-          String.raw`    )  ---  (`
-        ],
-        catchphrase: `"All Eyes on Me!"`
+        asciiLines: [
+String.raw`   /\_/\   `,
+String.raw`  ( o.o )  ~ "All eyes on me!"`,
+String.raw`   > ^ <   `
+        ]
       }
     ];
 
-    // Additional random sets
     const HAIR_COLORS = [
-      'Bright Gold', 'Silver-White', 'Rusty Red', 'Electric Blue'
+      'Bright Gold', 'Silver-White', 'Rusty Red', 'Electric Blue', 'Dark Brown'
     ];
     const ACCESSORIES = [
-      'Presidential Tie', 'Golden Microphone', 'Champagne Glass', 'Signature Cap'
+      'Presidential Tie', 'Golden Microphone', 'Champagne Glass', 'Signature Cap', 'Executive Suit'
     ];
 
-    // Basic ID check
+    // ID check
     function validateID(input) {
       return input.length >= 4;
     }
 
-    // Hash function
+    // hash function
     function hashID(input) {
       let hash = 0;
       for (let i = 0; i < input.length; i++) {
         const char = input.charCodeAt(i);
         hash = ((hash << 5) - hash) + char;
-        hash |= 0; // Convert to 32-bit int
+        hash |= 0; // 32-bit int
       }
       return Math.abs(hash);
     }
 
-    // Generate Trump
-    function generateTrump(hash) {
-      const archetypeIndex = hash % TRUMP_TYPES.length;
-      const hairIndex = (hash >> 2) % HAIR_COLORS.length;
-      const accessoryIndex = (hash >> 4) % ACCESSORIES.length;
-      const egoLevel = (hash % 100) + 1;
+    // generate final data
+    function generateTrump(hashVal) {
+      const typeIndex = hashVal % TRUMP_TYPES.length;
+      const hairIndex = (hashVal >> 2) % HAIR_COLORS.length;
+      const accessoryIndex = (hashVal >> 4) % ACCESSORIES.length;
+      const egoLevel = (hashVal % 100) + 1;
 
-      const archetypeData = TRUMP_TYPES[archetypeIndex];
       return {
-        archetype: archetypeData.archetype,
+        archetype: TRUMP_TYPES[typeIndex].archetype,
+        asciiArt: TRUMP_TYPES[typeIndex].asciiLines.join('\n'),
         hairColor: HAIR_COLORS[hairIndex],
         accessory: ACCESSORIES[accessoryIndex],
-        egoLevel: egoLevel,
-        asciiArt: archetypeData.lines.join('\n'),
-        catchphrase: archetypeData.catchphrase
+        egoLevel
       };
     }
 
-    // Show/Hide loading
+    // Display / Hide loading
     function showLoading() {
       loadingContainer.style.display = 'block';
       trumpShowcase.innerHTML = '<h2>Your Trump Companion</h2>';
@@ -594,80 +589,75 @@
       loadingContainer.style.display = 'none';
     }
 
-    // Display Trump
-    function displayTrump(trump) {
-      const trumpCard = document.createElement('div');
-      trumpCard.className = 'trump-card';
-      trumpCard.innerHTML = `
-${trump.asciiArt}
+    // Show final
+    function displayTrump(trumpData) {
+      const div = document.createElement('div');
+      div.className = 'trump-card';
+      div.innerHTML = `
+${trumpData.asciiArt}
 
-"${trump.catchphrase}"
-
-<p><strong>Archetype:</strong> ${trump.archetype}</p>
-<p><strong>Hair Color:</strong> ${trump.hairColor}</p>
-<p><strong>Accessory:</strong> ${trump.accessory}</p>
-<p><strong>Ego Level:</strong> ${trump.egoLevel}/100
-      `;
-
+<p><strong>Archetype:</strong> ${trumpData.archetype}</p>
+<p><strong>Hair Color:</strong> ${trumpData.hairColor}</p>
+<p><strong>Accessory:</strong> ${trumpData.accessory}</p>
+<p><strong>Ego Level:</strong> ${trumpData.egoLevel}/100
+`;
       // Download button
       const downloadBtn = document.createElement('button');
       downloadBtn.className = 'download-btn';
       downloadBtn.textContent = 'Download Info';
-      downloadBtn.addEventListener('click', () => downloadTrump(trump));
+      downloadBtn.addEventListener('click', () => downloadTrump(trumpData));
 
-      // Share button
+      // Share on X button
       const shareBtn = document.createElement('button');
       shareBtn.className = 'share-btn';
       shareBtn.textContent = 'Share on X';
-      shareBtn.addEventListener('click', () => shareOnX(trump));
+      shareBtn.addEventListener('click', () => shareOnX(trumpData));
 
-      trumpCard.appendChild(downloadBtn);
-      trumpCard.appendChild(shareBtn);
+      div.appendChild(downloadBtn);
+      div.appendChild(shareBtn);
 
-      trumpShowcase.appendChild(trumpCard);
+      trumpShowcase.appendChild(div);
       trumpShowcase.style.display = 'block';
     }
 
-    // Download Trump
-    function downloadTrump(trump) {
-      const data = `
-Trump Generator
----------------
-Archetype: ${trump.archetype}
-Hair Color: ${trump.hairColor}
-Accessory: ${trump.accessory}
-Ego Level: ${trump.egoLevel}/100
+    // Download function
+    function downloadTrump(t) {
+      const content = `
+Trumperator
+------------
+Archetype: ${t.archetype}
+Hair Color: ${t.hairColor}
+Accessory: ${t.accessory}
+Ego Level: ${t.egoLevel}/100
 
 ASCII:
-${trump.asciiArt}
-
-"${trump.catchphrase}"
-      `;
-      const blob = new Blob([data], { type: 'text/plain' });
+${t.asciiArt}
+`;
+      const blob = new Blob([content], { type: 'text/plain' });
       const link = document.createElement('a');
       link.href = URL.createObjectURL(blob);
-      link.download = `Trump_${trump.archetype.replace(/\s+/g,'_')}.txt`;
+      link.download = `Trump_${t.archetype.replace(/\s+/g,'_')}.txt`;
       link.click();
     }
 
     // Share on X
-    function shareOnX(trump) {
-      const message = `Check out my Trump ASCII:
+    function shareOnX(t) {
+      const msg = `Check out my #Trumperator creation!
 
-Archetype: ${trump.archetype}
-Hair: ${trump.hairColor}
-Accessory: ${trump.accessory}
-Ego: ${trump.egoLevel}/100
+Archetype: ${t.archetype}
+Hair: ${t.hairColor}
+Accessory: ${t.accessory}
+Ego: ${t.egoLevel}/100
 
-${trump.asciiArt}
+${t.asciiArt}
 
-#Trumperator #TrumpASCII
-      `;
-      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`;
+#ASCII #TrumpGenerator
+`;
+      const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
     }
 
-    // Logging
+    // Log
     function logMessage(msg, type="info") {
       const span = document.createElement("span");
       span.classList.add(type);
@@ -676,38 +666,37 @@ ${trump.asciiArt}
       logArea.scrollTop = logArea.scrollHeight;
     }
 
-    // Check if existing Trump is stored
-    function checkExistingTrump(walletAddr) {
-      const stored = localStorage.getItem(`trump_${walletAddr}`);
-      if (stored) {
-        const existing = JSON.parse(stored);
-        displayTrump(existing);
+    // localStorage check
+    function checkExistingTrump(addr) {
+      const existing = localStorage.getItem(`trump_${addr}`);
+      if (existing) {
+        const data = JSON.parse(existing);
+        displayTrump(data);
         logMessage("A Trump ASCII is already stored for this wallet. Loading...", "warning");
         generatorSection.style.display = 'none';
       }
     }
 
-    // Save Trump
-    function saveTrump(walletAddr, trump) {
-      localStorage.setItem(`trump_${walletAddr}`, JSON.stringify(trump));
+    function saveTrump(addr, t) {
+      localStorage.setItem(`trump_${addr}`, JSON.stringify(t));
     }
 
-    // On generate
+    // handle generate
     generateButton.addEventListener('click', () => {
       if (!userWalletAddress) {
-        alert('Please connect Phantom wallet first!');
+        alert("Connect your wallet first!");
         return;
       }
       const inputID = trumpInput.value.trim();
       if (!validateID(inputID)) {
-        alert('Please enter a valid ID (at least 4 characters).');
+        alert("Please enter an ID (at least 4 characters).");
         return;
       }
-      // Check if a Trump is already stored
+      // check existing
       const exist = localStorage.getItem(`trump_${userWalletAddress}`);
       if (exist) {
-        alert('You already have a Trump for this wallet.');
-        logMessage("Attempted to create multiple Trumps for same wallet.", "warning");
+        alert("You already have a Trump for this wallet.");
+        logMessage("Attempted multiple Trump generations for one wallet.", "warning");
         checkExistingTrump(userWalletAddress);
         return;
       }
@@ -715,48 +704,45 @@ ${trump.asciiArt}
       showLoading();
       setTimeout(() => {
         const combo = userWalletAddress + inputID;
-        const hashVal = hashID(combo);
-        const newTrump = generateTrump(hashVal);
+        const hashed = hashID(combo);
+        const newTrump = generateTrump(hashed);
 
         hideLoading();
         displayTrump(newTrump);
         logMessage(`Trump with archetype "${newTrump.archetype}" created successfully.`, "success");
 
         saveTrump(userWalletAddress, newTrump);
-
-        // Hide generator
         generatorSection.style.display = 'none';
       }, 1500);
     });
 
-    // Phantom provider detection
-    function getProviderObj() {
+    // Phantom integration
+    function getSolanaProvider() {
       if ('solana' in window) {
         const p = window.solana;
         if (p.isPhantom) return p;
       }
       return null;
     }
-
     async function connectPhantom() {
-      const providerObj = getProviderObj();
-      if (!providerObj) {
-        alert("Phantom wallet extension not found. Please install Phantom.");
+      const provider = getSolanaProvider();
+      if (!provider) {
+        alert("Phantom extension not found. Please install it first.");
         window.open("https://phantom.app/", "_blank");
         return;
       }
       try {
-        const connectRes = await providerObj.connect();
-        userWalletAddress = connectRes.publicKey.toString();
-        walletAddressDisplay.textContent = `Connected: ${userWalletAddress.substring(0, 6)}...${userWalletAddress.substring(userWalletAddress.length - 4)}`;
+        const conRes = await provider.connect();
+        userWalletAddress = conRes.publicKey.toString();
+        walletAddressDisplay.textContent = `Connected: ${userWalletAddress.substring(0, 6)}...${userWalletAddress.substring(userWalletAddress.length-4)}`;
         connectWalletButton.style.display = 'none';
         generatorSection.style.display = 'block';
         logMessage("Wallet connected successfully.", "success");
 
-        // Check existing
+        // check existing
         checkExistingTrump(userWalletAddress);
-      } catch (err) {
-        console.log("Wallet connect error: ", err);
+      } catch (e) {
+        console.log("Wallet connect error: ", e);
         logMessage("Could not connect to Phantom wallet.", "error");
       }
     }
